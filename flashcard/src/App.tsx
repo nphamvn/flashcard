@@ -34,7 +34,7 @@ function buildAllRandom(): Card[] {
 }
 
 function imgPath(test: number, no: number, side: 'question' | 'answer'): string {
-  return `/data/${test}/${no}/${side}.png`;
+  return `/data/${test}/${no}/${side === 'question' ? 'q' : 'a'}.png`;
 }
 
 export default function App() {
