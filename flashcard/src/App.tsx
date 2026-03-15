@@ -71,23 +71,54 @@ export default function App() {
 
   const reset = () => { setMode(null); setSelectedTest(null); };
 
+  // ── Home screen ──────────────────────────────────────────────────────────────
   if (!mode) {
     return (
-      <div style={s.page}>
-        <h1 style={s.title}>Flashcards</h1>
-
-        <div style={s.modeCard} onClick={() => startMode('all-random')}>
-          <div style={s.modeTitle}>🎲 Random — All 500</div>
-          <div style={s.modeDesc}>Random questions from all 5 tests</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center px-4 py-14 font-sans">
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 mb-4">
+            <span className="text-2xl">🗂</span>
+          </div>
+          <h1 className="text-4xl font-bold text-white tracking-tight">Flashcards</h1>
+          <p className="mt-1 text-slate-400 text-sm">500 questions across 5 tests</p>
         </div>
 
-        <h2 style={s.subtitle}>Choose a Test</h2>
-        <div style={s.testGrid}>
+        {/* All-random card */}
+        <button
+          onClick={() => startMode('all-random')}
+          className="w-full max-w-sm mb-8 group relative rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-colors p-6 text-left shadow-lg shadow-indigo-900/40 cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎲</span>
+            <div>
+              <div className="text-lg font-bold text-white">Random — All 500</div>
+              <div className="text-indigo-200 text-sm">Shuffle all questions from every test</div>
+            </div>
+          </div>
+          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-indigo-300 group-hover:translate-x-1 transition-transform">→</span>
+        </button>
+
+        {/* Per-test section */}
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Or choose a test</p>
+        <div className="w-full max-w-sm flex flex-col gap-3">
           {TESTS.map(t => (
-            <div key={t} style={s.testCard}>
-              <div style={s.testLabel}>Test {t}</div>
-              <button style={s.btn} onClick={() => startMode('test-sorted', t)}>In Order</button>
-              <button style={s.btn} onClick={() => startMode('test-random', t)}>Random</button>
+            <div key={t} className="flex items-center gap-3 rounded-xl bg-slate-800/60 border border-slate-700/50 px-4 py-3">
+              <span className="text-slate-300 font-bold w-14">Test {t}</span>
+              <div className="flex gap-2 ml-auto">
+                <button
+                  onClick={() => startMode('test-sorted', t)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors cursor-pointer"
+                >
+                  In Order
+                </button>
+                <button
+                  onClick={() => startMode('test-random', t)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors cursor-pointer"
+                >
+                  Random
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -95,172 +126,100 @@ export default function App() {
     );
   }
 
+  // ── Study screen ─────────────────────────────────────────────────────────────
   const card = deck[index];
   const side = flipped ? 'answer' : 'question';
   const modeLabel =
-    mode === 'all-random' ? 'All 500 — Random' :
-    mode === 'test-sorted' ? `Test ${selectedTest} — In Order` :
-    `Test ${selectedTest} — Random`;
+    mode === 'all-random' ? 'All 500 · Random' :
+    mode === 'test-sorted' ? `Test ${selectedTest} · In Order` :
+    `Test ${selectedTest} · Random`;
   const progress = ((index + 1) / deck.length) * 100;
 
   return (
-    <div style={s.page}>
-      <div style={s.topBar}>
-        <button style={s.backBtn} onClick={reset}>← Back</button>
-        <span style={s.modeTag}>{modeLabel}</span>
-        <span style={s.counter}>{index + 1} / {deck.length}</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center px-4 py-8 font-sans">
+
+      {/* Top bar */}
+      <div className="w-full max-w-2xl flex items-center gap-3 mb-6">
+        <button
+          onClick={reset}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-500 bg-slate-800/50 hover:bg-slate-700/50 transition-all cursor-pointer"
+        >
+          ← Back
+        </button>
+        <span className="flex-1 text-center text-sm font-semibold text-indigo-400">{modeLabel}</span>
+        <span className="text-sm font-mono text-slate-500">
+          {index + 1}<span className="text-slate-700">/{deck.length}</span>
+        </span>
       </div>
 
-      <div style={s.flashcard} onClick={flip}>
+      {/* Progress bar */}
+      <div className="w-full max-w-2xl h-1 bg-slate-800 rounded-full mb-6 overflow-hidden">
+        <div
+          className="h-full bg-indigo-500 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Flashcard */}
+      <div
+        onClick={flip}
+        className="w-full max-w-2xl min-h-96 rounded-2xl border border-slate-700/60 bg-slate-800/50 backdrop-blur cursor-pointer flex flex-col items-center justify-center relative overflow-hidden shadow-2xl hover:border-indigo-500/40 transition-colors select-none"
+      >
+        {/* Side badge */}
+        <div className={`absolute top-3 left-3 px-2 py-0.5 rounded-md text-xs font-bold tracking-wide ${flipped ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'}`}>
+          {flipped ? 'ANSWER' : 'QUESTION'}
+        </div>
+
+        {/* Card info */}
+        <div className="absolute top-3 right-3 text-xs text-slate-600 font-mono">
+          T{card.test}·Q{card.no}
+        </div>
+
         {imgError ? (
-          <div style={s.placeholder}>
-            <div>{flipped ? 'Answer' : 'Question'}</div>
-            <div style={s.placeholderSub}>Test {card.test} · Q{card.no}</div>
+          <div className="flex flex-col items-center justify-center gap-2 py-16 text-slate-500">
+            <span className="text-4xl">🖼</span>
+            <span className="font-semibold">{flipped ? 'Answer' : 'Question'} image not found</span>
+            <span className="text-xs text-slate-600">Test {card.test} · Q{card.no}</span>
           </div>
         ) : (
           <img
             key={`${card.test}-${card.no}-${side}`}
             src={imgPath(card.test, card.no, side)}
             alt={side}
-            style={s.img}
+            className="max-w-full max-h-[420px] object-contain p-6"
             onError={() => setImgError(true)}
           />
         )}
-        <div style={s.flipHint}>{flipped ? 'Click to see question' : 'Click to flip'}</div>
+
+        {/* Flip hint */}
+        <div className="absolute bottom-3 right-4 text-xs text-slate-600">
+          {flipped ? 'click to see question' : 'click to flip'}
+        </div>
       </div>
 
-      <div style={s.navRow}>
-        <button style={s.navBtn} onClick={() => navigate(-1)} disabled={index === 0}>← Prev</button>
-        <button style={s.navBtn} onClick={flip}>{flipped ? 'Show Question' : 'Show Answer'}</button>
-        <button style={s.navBtn} onClick={() => navigate(1)} disabled={index === deck.length - 1}>Next →</button>
-      </div>
-
-      <div style={s.progressBar}>
-        <div style={{ ...s.progressFill, width: `${progress}%` }} />
+      {/* Nav buttons */}
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => navigate(-1)}
+          disabled={index === 0}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+        >
+          ← Prev
+        </button>
+        <button
+          onClick={flip}
+          className={`px-5 py-2.5 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${flipped ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-400 hover:bg-emerald-600/30' : 'bg-indigo-600/20 border-indigo-500/40 text-indigo-400 hover:bg-indigo-600/30'}`}
+        >
+          {flipped ? 'Show Question' : 'Show Answer'}
+        </button>
+        <button
+          onClick={() => navigate(1)}
+          disabled={index === deck.length - 1}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+        >
+          Next →
+        </button>
       </div>
     </div>
   );
 }
-
-const s: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: '100vh',
-    background: '#0f172a',
-    color: '#e2e8f0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '32px 16px',
-    fontFamily: 'system-ui, sans-serif',
-  },
-  title: { fontSize: 32, fontWeight: 700, marginBottom: 24, color: '#f1f5f9' },
-  subtitle: { fontSize: 18, fontWeight: 600, margin: '24px 0 12px', color: '#94a3b8' },
-  modeCard: {
-    background: '#1e293b',
-    border: '2px solid #334155',
-    borderRadius: 16,
-    padding: '24px 40px',
-    cursor: 'pointer',
-    textAlign: 'center',
-    width: 320,
-  },
-  modeTitle: { fontSize: 20, fontWeight: 700, marginBottom: 6 },
-  modeDesc: { fontSize: 13, color: '#94a3b8' },
-  testGrid: { display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' },
-  testCard: {
-    background: '#1e293b',
-    border: '1px solid #334155',
-    borderRadius: 12,
-    padding: '16px 20px',
-    textAlign: 'center',
-    width: 110,
-  },
-  testLabel: { fontWeight: 700, marginBottom: 8 },
-  btn: {
-    display: 'block',
-    width: '100%',
-    marginTop: 6,
-    padding: '6px 0',
-    borderRadius: 8,
-    border: 'none',
-    background: '#3b82f6',
-    color: '#fff',
-    cursor: 'pointer',
-    fontSize: 13,
-    fontWeight: 600,
-  },
-  topBar: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 20,
-    width: '100%',
-    maxWidth: 640,
-  },
-  backBtn: {
-    background: 'none',
-    border: '1px solid #475569',
-    color: '#94a3b8',
-    borderRadius: 8,
-    padding: '6px 14px',
-    cursor: 'pointer',
-    fontSize: 14,
-  },
-  modeTag: { flex: 1, textAlign: 'center', fontWeight: 600, color: '#60a5fa' },
-  counter: { color: '#64748b', fontSize: 14 },
-  flashcard: {
-    width: '100%',
-    maxWidth: 640,
-    minHeight: 380,
-    background: '#1e293b',
-    borderRadius: 20,
-    border: '2px solid #334155',
-    cursor: 'pointer',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  img: { maxWidth: '100%', maxHeight: 360, objectFit: 'contain', padding: 16 },
-  placeholder: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 200,
-    color: '#475569',
-    fontSize: 18,
-    fontWeight: 600,
-  },
-  placeholderSub: { fontSize: 13, marginTop: 8, opacity: 0.5 },
-  flipHint: {
-    position: 'absolute',
-    bottom: 10,
-    right: 14,
-    fontSize: 12,
-    color: '#475569',
-  },
-  navRow: { display: 'flex', gap: 12, marginTop: 20 },
-  navBtn: {
-    padding: '10px 24px',
-    borderRadius: 10,
-    border: '1px solid #334155',
-    background: '#1e293b',
-    color: '#e2e8f0',
-    fontSize: 15,
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  progressBar: {
-    width: '100%',
-    maxWidth: 640,
-    height: 4,
-    background: '#1e293b',
-    borderRadius: 4,
-    marginTop: 16,
-    overflow: 'hidden',
-  },
-  progressFill: { height: '100%', background: '#3b82f6', borderRadius: 4, transition: 'width 0.3s' },
-};
