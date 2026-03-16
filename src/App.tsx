@@ -164,7 +164,6 @@ function ApiKeyModal({ onClose }: { onClose: () => void }) {
           Choose a provider and enter its API key. Keys are stored in your browser's localStorage.
         </p>
 
-        {/* Provider tabs */}
         <div className="flex gap-2 mb-4">
           {PROVIDERS.map(p => (
             <button
@@ -225,7 +224,6 @@ export default function App() {
   const [explainError, setExplainError] = useState<string | null>(null);
   const explainRef = useRef<HTMLDivElement>(null);
 
-  // Clear explanation when card changes
   useEffect(() => {
     setExplanation(null);
     setExplainError(null);
@@ -290,8 +288,7 @@ export default function App() {
     return (
       <>
         {showApiKeyModal && <ApiKeyModal onClose={() => setShowApiKeyModal(false)} />}
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center px-4 py-14 font-sans">
-          {/* Header */}
+        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center px-4 py-12 font-sans">
           <div className="mb-10 text-center">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 mb-4">
               <span className="text-2xl">🗂</span>
@@ -300,7 +297,6 @@ export default function App() {
             <p className="mt-1 text-slate-400 text-sm">500 questions across 5 tests</p>
           </div>
 
-          {/* All-random card */}
           <button
             onClick={() => startMode('all-random')}
             className="w-full max-w-sm mb-8 group relative rounded-2xl bg-indigo-600 hover:bg-indigo-500 transition-colors p-6 text-left shadow-lg shadow-indigo-900/40 cursor-pointer"
@@ -315,7 +311,6 @@ export default function App() {
             <span className="absolute right-5 top-1/2 -translate-y-1/2 text-indigo-300 group-hover:translate-x-1 transition-transform">→</span>
           </button>
 
-          {/* Per-test section */}
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Or choose a test</p>
           <div className="w-full max-w-sm flex flex-col gap-3 mb-10">
             {TESTS.map(t => (
@@ -339,7 +334,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* API Key setting */}
           <button
             onClick={() => setShowApiKeyModal(true)}
             className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
@@ -364,158 +358,175 @@ export default function App() {
   return (
     <>
       {showApiKeyModal && <ApiKeyModal onClose={() => setShowApiKeyModal(false)} />}
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center px-4 py-8 font-sans">
 
-        {/* Top bar */}
-        <div className="w-full max-w-2xl flex items-center gap-3 mb-6">
+      {/* Full-viewport flex column layout */}
+      <div className="h-dvh bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col font-sans overflow-hidden">
+
+        {/* ── Top bar ── */}
+        <header className="shrink-0 flex items-center gap-2 px-3 pt-3 pb-2">
           <button
             onClick={reset}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-500 bg-slate-800/50 hover:bg-slate-700/50 transition-all cursor-pointer"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm text-slate-400 hover:text-slate-200 border border-slate-700 hover:border-slate-500 bg-slate-800/60 hover:bg-slate-700/60 transition-all cursor-pointer"
           >
             ← Back
           </button>
-          <span className="flex-1 text-center text-sm font-semibold text-indigo-400">{modeLabel}</span>
+          <span className="flex-1 text-center text-sm font-semibold text-indigo-400 truncate px-1">{modeLabel}</span>
           <button
             onClick={() => setShowApiKeyModal(true)}
-            title="Set API Key"
-            className="text-slate-500 hover:text-slate-300 transition-colors text-base cursor-pointer px-1"
+            title="AI Settings"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-colors cursor-pointer"
           >
             ⚙
           </button>
-          <span className="text-sm font-mono text-slate-500">
-            {index + 1}<span className="text-slate-700">/{deck.length}</span>
+          <span className="text-sm font-mono text-slate-400 tabular-nums min-w-[4rem] text-right">
+            {index + 1}<span className="text-slate-600">/{deck.length}</span>
           </span>
-        </div>
+        </header>
 
-        {/* Progress bar */}
-        <div className="w-full max-w-2xl h-1 bg-slate-800 rounded-full mb-6 overflow-hidden">
+        {/* ── Progress bar ── */}
+        <div className="shrink-0 h-1 mx-3 bg-slate-800 rounded-full overflow-hidden">
           <div
             className="h-full bg-indigo-500 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Flashcard */}
-        <div
-          onClick={flip}
-          className="w-full max-w-2xl min-h-96 rounded-2xl border border-slate-700/60 bg-slate-800/50 backdrop-blur cursor-pointer flex flex-col items-center justify-center relative overflow-hidden shadow-2xl hover:border-indigo-500/40 transition-colors select-none"
-        >
-          {/* Side badge */}
-          <div className={`absolute top-3 left-3 px-2 py-0.5 rounded-md text-xs font-bold tracking-wide ${flipped ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'}`}>
-            {flipped ? 'ANSWER' : 'QUESTION'}
-          </div>
-
-          {/* Card info */}
-          <div className="absolute top-3 right-3 text-xs text-slate-600 font-mono">
-            T{card.test}·Q{card.no}
-          </div>
-
-          {imgError ? (
-            <div className="flex flex-col items-center justify-center gap-2 py-16 text-slate-500">
-              <span className="text-4xl">🖼</span>
-              <span className="font-semibold">{flipped ? 'Answer' : 'Question'} image not found</span>
-              <span className="text-xs text-slate-600">Test {card.test} · Q{card.no}</span>
+        {/* ── Card — grows to fill remaining space ── */}
+        <div className="flex-1 min-h-0 px-3 pt-3 pb-1">
+          <div
+            onClick={flip}
+            className="relative w-full h-full rounded-2xl border border-slate-700/60 bg-slate-800/50 backdrop-blur cursor-pointer overflow-hidden shadow-2xl hover:border-indigo-500/40 active:scale-[0.995] transition-all select-none"
+          >
+            {/* Side badge */}
+            <div className={`absolute top-3 left-3 z-10 px-2 py-0.5 rounded-md text-xs font-bold tracking-wide ${
+              flipped
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+            }`}>
+              {flipped ? 'ANSWER' : 'QUESTION'}
             </div>
-          ) : (
-            <img
-              key={`${card.test}-${card.no}-${side}`}
-              src={imgPath(card.test, card.no, side)}
-              alt={side}
-              className="max-w-full max-h-[420px] object-contain p-6"
-              onError={() => setImgError(true)}
-            />
-          )}
 
-          {/* Flip hint */}
-          <div className="absolute bottom-3 right-4 text-xs text-slate-600">
-            {flipped ? 'click to see question' : 'click to flip'}
+            {/* Card id */}
+            <div className="absolute top-3 right-3 z-10 text-xs text-slate-600 font-mono">
+              T{card.test}·Q{card.no}
+            </div>
+
+            {imgError ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-500">
+                <span className="text-4xl">🖼</span>
+                <span className="font-semibold">{flipped ? 'Answer' : 'Question'} image not found</span>
+                <span className="text-xs text-slate-600">Test {card.test} · Q{card.no}</span>
+              </div>
+            ) : (
+              <img
+                key={`${card.test}-${card.no}-${side}`}
+                src={imgPath(card.test, card.no, side)}
+                alt={side}
+                className="absolute inset-0 w-full h-full object-contain p-3"
+                onError={() => setImgError(true)}
+              />
+            )}
+
+            {/* Flip hint */}
+            <div className="absolute bottom-3 right-4 z-10 text-xs text-slate-600">
+              {flipped ? 'tap for question' : 'tap to flip'}
+            </div>
           </div>
         </div>
 
-        {/* Go to question — test-sorted only */}
-        {mode === 'test-sorted' && (
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              const input = (e.currentTarget.elements.namedItem('qno') as HTMLInputElement);
-              const n = parseInt(input.value, 10);
-              if (!isNaN(n) && n >= 1 && n <= deck.length) {
-                setFlipped(false);
-                setImgError(false);
-                setIndex(n - 1);
-                input.value = '';
-              }
-            }}
-            className="flex items-center gap-2 mt-5"
-          >
-            <label className="text-xs text-slate-500">Go to Q</label>
-            <input
-              name="qno"
-              type="number"
-              min={1}
-              max={deck.length}
-              placeholder={`1–${deck.length}`}
-              className="w-20 rounded-lg bg-slate-800 border border-slate-700 text-white text-sm px-2 py-1.5 font-mono outline-none focus:border-indigo-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <button
-              type="submit"
-              className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors cursor-pointer"
-            >
-              Go
-            </button>
-          </form>
+        {/* ── Scrollable bottom section (explanation) ── */}
+        {(explanation || explainError) && (
+          <div className="shrink-0 max-h-[30vh] overflow-y-auto px-3 pb-1">
+            <div ref={explainRef} className="rounded-2xl border border-slate-700/60 bg-slate-800/50 p-4">
+              {explainError ? (
+                <p className="text-sm text-red-400">{explainError}</p>
+              ) : (
+                <p className="text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">{explanation}</p>
+              )}
+            </div>
+          </div>
         )}
 
-        {/* Nav buttons */}
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={() => navigate(-1)}
-            disabled={index === 0}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-          >
-            ← Prev
-          </button>
-          <button
-            onClick={flip}
-            className={`px-5 py-2.5 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${flipped ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-400 hover:bg-emerald-600/30' : 'bg-indigo-600/20 border-indigo-500/40 text-indigo-400 hover:bg-indigo-600/30'}`}
-          >
-            {flipped ? 'Show Question' : 'Show Answer'}
-          </button>
-          <button
-            onClick={() => navigate(1)}
-            disabled={index === deck.length - 1}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-          >
-            Next →
-          </button>
-        </div>
+        {/* ── Bottom action bar ── */}
+        <div className="shrink-0 px-3 pt-2 pb-4 flex flex-col gap-2">
+          {/* Nav row */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate(-1)}
+              disabled={index === 0}
+              className="px-4 py-3 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            >
+              ← Prev
+            </button>
+            <button
+              onClick={flip}
+              className={`flex-1 py-3 rounded-xl text-sm font-semibold border transition-colors cursor-pointer ${
+                flipped
+                  ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-400 hover:bg-emerald-600/30'
+                  : 'bg-indigo-600/20 border-indigo-500/40 text-indigo-400 hover:bg-indigo-600/30'
+              }`}
+            >
+              {flipped ? 'Show Question' : 'Show Answer'}
+            </button>
+            <button
+              onClick={() => navigate(1)}
+              disabled={index === deck.length - 1}
+              className="px-4 py-3 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            >
+              Next →
+            </button>
+          </div>
 
-        {/* Translate & Explain button */}
-        <button
-          onClick={handleExplain}
-          disabled={isExplaining || imgError}
-          className="mt-4 flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-        >
-          {isExplaining ? (
-            <>
-              <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-amber-400/40 border-t-amber-400 rounded-full" />
-              Translating…
-            </>
-          ) : (
-            <>✦ Translate &amp; Explain</>
-          )}
-        </button>
+          {/* Translate + Go-to row */}
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={handleExplain}
+              disabled={isExplaining || imgError}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isExplaining ? (
+                <>
+                  <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-amber-400/40 border-t-amber-400 rounded-full" />
+                  Translating…
+                </>
+              ) : (
+                <>✦ Translate &amp; Explain</>
+              )}
+            </button>
 
-        {/* Explanation panel */}
-        {(explanation || explainError) && (
-          <div ref={explainRef} className="w-full max-w-2xl mt-4 rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5">
-            {explainError ? (
-              <p className="text-sm text-red-400">{explainError}</p>
-            ) : (
-              <p className="text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">{explanation}</p>
+            {mode === 'test-sorted' && (
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  const input = (e.currentTarget.elements.namedItem('qno') as HTMLInputElement);
+                  const n = parseInt(input.value, 10);
+                  if (!isNaN(n) && n >= 1 && n <= deck.length) {
+                    setFlipped(false);
+                    setImgError(false);
+                    setIndex(n - 1);
+                    input.value = '';
+                  }
+                }}
+                className="flex items-center gap-1.5"
+              >
+                <input
+                  name="qno"
+                  type="number"
+                  min={1}
+                  max={deck.length}
+                  placeholder={`Q#`}
+                  className="w-16 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm px-2 py-2.5 font-mono outline-none focus:border-indigo-500 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-2.5 rounded-xl text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors cursor-pointer"
+                >
+                  Go
+                </button>
+              </form>
             )}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
