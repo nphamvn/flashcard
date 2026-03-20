@@ -63,7 +63,7 @@ async function loadTranslations(test: number): Promise<TranslationMap> {
     }
   }
 
-  throw new Error('Chua co file dich cho de nay.');
+  throw new Error('No translation file is available for this test.');
 }
 
 export default function App() {
@@ -126,12 +126,12 @@ export default function App() {
       }
 
       const entry = map[String(card.no)];
-      if (!entry) throw new Error(`Chua co ban dich cho cau ${card.no}.`);
+      if (!entry) throw new Error(`No translation available for question ${card.no}.`);
 
       setTranslation(entry);
       setTimeout(() => explainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
     } catch (e) {
-      setTranslationError(e instanceof Error ? e.message : 'Khong doc duoc ban dich.');
+      setTranslationError(e instanceof Error ? e.message : 'Unable to load translation.');
     } finally {
       setIsLoadingTranslation(false);
     }
@@ -276,7 +276,7 @@ export default function App() {
               <div className="space-y-3 text-sm leading-relaxed">
                 <div>
                   <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                    {flipped ? 'Ban dich dap an' : 'Ban dich cau hoi'}
+                    {flipped ? 'Answer Translation' : 'Question Translation'}
                   </div>
                   <p className="text-slate-200 whitespace-pre-wrap">
                     {flipped ? translation.answer : translation.question}
@@ -284,7 +284,7 @@ export default function App() {
                 </div>
                 <div>
                   <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                    Giai thich
+                    Explanation
                   </div>
                   <p className="text-slate-300 whitespace-pre-wrap">{translation.explanation}</p>
                 </div>
@@ -332,7 +332,7 @@ export default function App() {
             {isLoadingTranslation ? (
               <>
                 <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-amber-400/40 border-t-amber-400 rounded-full" />
-                Dang tai ban dich…
+                Loading translation…
               </>
             ) : (
               <>Translate & Explain</>
